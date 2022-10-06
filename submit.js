@@ -18,9 +18,11 @@ initializeApp({
 const db = getFirestore();
 
 var express = require('express');
+const request = require("request");
 
 app = express();
 
+app.set("view engine", "ejs");
 
 app.get('/register',function(req,res){
     res.sendFile(__dirname + '/register.html')
@@ -38,27 +40,37 @@ app.get('/registersubmit',function(req,res){
 
 app.get('/findmeaning',function(req,res){
 
-    bot.on('message', function(mg){
-        request('https://api.dictionaryapi.dev/api/v2/entries/en/'+(mg.text).toLowerCase(), function (error, response, body) {
-            console.log(mg);
-            console.log(body);
+    const word = req.query.word;
+    request("https://api.dictionaryapi.dev/api/v2/entries/en/"+word,
+        function (error, response, body) {
             
-            if(JSON.parse(body).title != null){
-                bot.sendMessage(mg.chat.id,JSON.parse(body).title)
-            }
-            else{
+        console.log(body);
+            
+        if(JSON.parse(body).title != null){
+            res.send("sorry...no word found!!!");
+        }
+        else{
 
-                res.render("meaningpage", {
-                    word: JSON.parse(body)[0].word,
-                    partOfSpeech: JSON.parse(body)[0].meanings[0].partOfSpeech,
-                    definition: JSON.parse(body)[0].meanings[0].definitions[0].definition,
-                  });
+            /*res.render('meaningpage', {
+                word : JSON.parse(body)[0].word,
+                partOfSpeech : JSON.parse(body)[0].meanings[0].partOfSpeech,
+                definition : JSON.parse(body)[0].meanings[0].definitions[0].definition,
+                });
+            res.sendFile(__dirname + '/meaningpage.ejs');   */
 
+
+            res.write('<body style="background-color: skyblue" >')
+            res.write('<center>');
+            res.write('<h1>'+JSON.parse(body)[0].word+'</h1>');
+            res.write('<h2> PARTS OF SPEECH - '+JSON.parse(body)[0].meanings[0].partOfSpeech+'</h2>');
+            res.write('<h2> DEFINITION - '+JSON.parse(body)[0].meanings[0].definitions[0].definition+'</h2>');
+            res.write('</center>');
+            res.write('</body>');
             }
     })
-    });
+    
 
-    res.send(__dirname + '/meaningpage.ejs');
+   
 })
 
 app.get('/login',function(req,res){
