@@ -24,6 +24,14 @@ app = express();
 
 app.set("view engine", "ejs");
 
+app.get('/',function(req,res){
+    res.sendFile(__dirname + '/home.html')
+})
+
+app.get('/about',function(req,res){
+    res.sendFile(__dirname + '/about.html')
+})
+
 app.get('/register',function(req,res){
     res.sendFile(__dirname + '/register.html')
 })
@@ -34,7 +42,10 @@ app.get('/registersubmit',function(req,res){
         username : req.query.username,
         pass : req.query.pass,
         email : req.query.email
-    })
+    });
+
+    res.sendFile(__dirname + '/login.html');
+
 })
 
 
@@ -59,7 +70,7 @@ app.get('/findmeaning',function(req,res){
             res.sendFile(__dirname + '/meaningpage.ejs');   */
 
 
-            res.write('<body style="background-color: skyblue" >')
+            res.write('<body style="background-color: skyblue;background-image: linear-gradient(45deg,#531de9,#8078f7)" >')
             res.write('<center>');
             res.write('<h1>'+JSON.parse(body)[0].word+'</h1>');
             res.write('<h2> PARTS OF SPEECH - '+JSON.parse(body)[0].meanings[0].partOfSpeech+'</h2>');
