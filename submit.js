@@ -24,6 +24,8 @@ app = express();
 
 app.set("view engine", "ejs");
 
+app.use(express.static(path.join(__dirname)))
+
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/home.html')
 })
@@ -99,15 +101,16 @@ app.post('/loginsubmit',function(req,res){
             if((usname==doc.data().username) && (password==doc.data().pass)){
                 flag = 1;
             }
-            if(flag==1){
-                res.sendFile(__dirname + '/find.html');
-            }
-            else{
-                res.send("Incorrect credentials.Login failed...");
-            }
+            
             
           console.log(flag);
         });
+        if(flag==1){
+            res.sendFile(__dirname + '/find.html');
+        }
+        else{
+            res.send("Incorrect credentials.Login failed...");
+        }
   })
 
 })
